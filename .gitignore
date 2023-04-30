@@ -2,6 +2,6 @@
 /target/
 /Playlists/
 /test/
-*.json
-*.txt
+serversettings.json
+config.txt
 nb*.xml
