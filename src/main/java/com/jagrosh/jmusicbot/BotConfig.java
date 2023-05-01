@@ -18,6 +18,8 @@ package com.jagrosh.jmusicbot;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
@@ -356,15 +358,19 @@ public class BotConfig
         return transforms;
     }
 
-    public String[] getIntros(Long userId)
+    public IntroConfig[] getIntros(Long userId)
     {
         try 
         {
-            return intros.getStringList(userId.toString()).toArray(new String[0]);
+            List<IntroConfig> list = new ArrayList<IntroConfig>();
+            for (Config config : intros.getConfigList(userId.toString())) {
+                list.add(new IntroConfig(config.getString("link"), config.getInt("seek")));
+            }
+            return list.toArray(new IntroConfig[list.size()]);
         }
         catch(NullPointerException | ConfigException.Missing e)
         {
-            return new String[0];
+            return new IntroConfig[0];
         }
     }
 }

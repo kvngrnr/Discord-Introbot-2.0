@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
+import com.jagrosh.jmusicbot.IntroConfig;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.audio.QueuedTrack;
 import com.jagrosh.jmusicbot.commands.MusicCommand;
@@ -40,7 +41,7 @@ public class IntroCmd extends MusicCommand
     public void doCommand(CommandEvent event) 
     {
         Long userId = event.getMember().getIdLong();
-        String[] introLinks = bot.getConfig().getIntros(userId);
+        IntroConfig[] introLinks = bot.getConfig().getIntros(userId);
         if (introLinks.length == 0) {
             event.replyWarning("There are no intros set for this user.");
 
@@ -50,8 +51,9 @@ public class IntroCmd extends MusicCommand
             return;
         }
 
-        String selectedIntro = introLinks[new Random().nextInt(introLinks.length)];
-        event.reply(loadingEmoji+" Loading... `["+selectedIntro+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), selectedIntro, new ResultHandler(m,event,false)));
+        IntroConfig selectedIntro = introLinks[new Random().nextInt(introLinks.length)];
+        String introLink = selectedIntro.getLink();
+        event.reply(loadingEmoji+" Loading... `["+introLink+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), introLink, new ResultHandler(m,event,false, selectedIntro.getSeek())));
     }
 
     private class ResultHandler implements AudioLoadResultHandler
@@ -59,12 +61,14 @@ public class IntroCmd extends MusicCommand
         private final Message m;
         private final CommandEvent event;
         private final boolean ytsearch;
+        private final Integer seek;
         
-        private ResultHandler(Message m, CommandEvent event, boolean ytsearch)
+        private ResultHandler(Message m, CommandEvent event, boolean ytsearch, Integer seek)
         {
             this.m = m;
             this.event = event;
             this.ytsearch = ytsearch;
+            this.seek = seek;
         }
         
         private void loadSingle(AudioTrack track)
@@ -75,6 +79,7 @@ public class IntroCmd extends MusicCommand
                         +FormatUtil.formatTime(track.getDuration())+"` > `"+FormatUtil.formatTime(bot.getConfig().getMaxSeconds()*1000)+"`")).queue();
                 return;
             }
+            track.setPosition(seek);
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
             int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor()))+1;
             String addMsg = FormatUtil.filter(event.getClient().getSuccess()+" Added **"+track.getInfo().title
@@ -94,7 +99,7 @@ public class IntroCmd extends MusicCommand
             if(ytsearch)
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" No results found for `"+event.getArgs()+"`.")).queue();
             else
-                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true));
+                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true,seek));
         }
 
         @Override
