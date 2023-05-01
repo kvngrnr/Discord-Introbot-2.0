@@ -30,6 +30,7 @@ public class IntroCmd extends MusicCommand
     public void doCommand(CommandEvent event) 
     {
         Long userId = event.getMember().getIdLong();
+        String[] introLinks = bot.getConfig().getIntros(userId);
     }
 }
 

@@ -15,14 +15,18 @@
  */
 package com.jagrosh.jmusicbot;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.typesafe.config.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
+
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
@@ -45,7 +49,7 @@ public class BotConfig
     private long owner, maxSeconds, aloneTimeUntilStop;
     private OnlineStatus status;
     private Activity game;
-    private Config aliases, transforms;
+    private Config aliases, transforms, intros;
 
     private boolean valid = false;
     
@@ -91,6 +95,8 @@ public class BotConfig
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
+            intros = config.getConfig("intros");
+
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -348,5 +354,17 @@ public class BotConfig
     public Config getTransforms()
     {
         return transforms;
+    }
+
+    public String[] getIntros(Long userId)
+    {
+        try 
+        {
+            return intros.getStringList(userId.toString()).toArray(new String[0]);
+        }
+        catch(NullPointerException | ConfigException.Missing e)
+        {
+            return new String[0];
+        }
     }
 }
