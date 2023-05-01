@@ -1,5 +1,7 @@
 package com.jagrosh.jmusicbot.commands.music;
 
+import java.util.Random;
+
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.MusicCommand;
@@ -31,6 +33,7 @@ public class IntroCmd extends MusicCommand
     {
         Long userId = event.getMember().getIdLong();
         String[] introLinks = bot.getConfig().getIntros(userId);
+        String selectedIntro = introLinks[new Random().nextInt(introLinks.length)];
     }
 }
 
