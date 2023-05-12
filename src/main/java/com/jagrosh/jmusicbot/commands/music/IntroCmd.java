@@ -31,7 +31,7 @@ public class IntroCmd extends MusicCommand
         super(bot);
         this.loadingEmoji = bot.getConfig().getLoading();
         this.name = "intro";
-        this.help = "plays one of the user`s intros";
+        this.help = "plays one of the user's intros";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = false;
