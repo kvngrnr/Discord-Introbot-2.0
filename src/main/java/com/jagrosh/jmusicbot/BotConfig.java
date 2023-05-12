@@ -364,7 +364,7 @@ public class BotConfig
         {
             List<IntroConfig> list = new ArrayList<IntroConfig>();
             for (Config config : intros.getConfigList(userId.toString())) {
-                list.add(new IntroConfig(config.getString("link"), config.getInt("seek")));
+                list.add(new IntroConfig(config.getString("link"), config.getInt("seek"), config.getString("title")));
             }
             return list.toArray(new IntroConfig[list.size()]);
         }

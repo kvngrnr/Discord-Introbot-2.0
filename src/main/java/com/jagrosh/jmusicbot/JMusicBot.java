@@ -42,6 +42,7 @@ import com.jagrosh.jmusicbot.commands.dj.SkiptoCmd;
 import com.jagrosh.jmusicbot.commands.dj.StopCmd;
 import com.jagrosh.jmusicbot.commands.dj.VolumeCmd;
 import com.jagrosh.jmusicbot.commands.general.SettingsCmd;
+import com.jagrosh.jmusicbot.commands.music.ChooseIntroCmd;
 import com.jagrosh.jmusicbot.commands.music.IntroCmd;
 import com.jagrosh.jmusicbot.commands.music.LyricsCmd;
 import com.jagrosh.jmusicbot.commands.music.NowplayingCmd;
@@ -149,6 +150,7 @@ public class JMusicBot
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new IntroCmd(bot),
+                        new ChooseIntroCmd(bot),
                         new PlaylistsCmd(bot),
                         new QueueCmd(bot),
                         new RemoveCmd(bot),
