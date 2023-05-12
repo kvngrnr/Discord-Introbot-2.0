@@ -15,10 +15,11 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.jagrosh.jmusicbot.queue.Queueable;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+
 import net.dv8tion.jda.api.entities.User;
 
 /**
@@ -33,11 +34,23 @@ public class QueuedTrack implements Queueable
     {
         this(track, new RequestMetadata(owner));
     }
+
+    public QueuedTrack(AudioTrack track, User owner, int seek)
+    {
+        this(track, new RequestMetadata(owner), seek);
+    }
     
     public QueuedTrack(AudioTrack track, RequestMetadata rm)
     {
         this.track = track;
         this.track.setUserData(rm);
+    }
+    
+    public QueuedTrack(AudioTrack track, RequestMetadata rm, int seek)
+    {
+        this.track = track;
+        this.track.setUserData(rm);
+        this.track.setPosition(seek);
     }
     
     @Override

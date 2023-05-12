@@ -47,7 +47,7 @@ public class IntroCmd extends MusicCommand
 
             // send private message with user`s id to me
             User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwnerId()).complete();
-            owner.openPrivateChannel().queue(pc -> pc.sendMessage("Not intros set for user <"+ event.getMember().getUser().getName()+"> with Id <"+userId+">").queue());
+            owner.openPrivateChannel().queue(pc -> pc.sendMessage("No intros set for user <"+ event.getMember().getUser().getName()+"> with Id <"+userId+">").queue());
             return;
         }
 
@@ -79,9 +79,8 @@ public class IntroCmd extends MusicCommand
                         +FormatUtil.formatTime(track.getDuration())+"` > `"+FormatUtil.formatTime(bot.getConfig().getMaxSeconds()*1000)+"`")).queue();
                 return;
             }
-            track.setPosition(seek);
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-            int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor()))+1;
+            int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor(), seek))+1;
             String addMsg = FormatUtil.filter(event.getClient().getSuccess()+" Added **"+track.getInfo().title
                     +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(pos==0?"to begin playing":" to the queue at position "+pos));
             m.editMessage(addMsg).queue();
