@@ -15,6 +15,9 @@
  */
 package com.jagrosh.jmusicbot;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -372,5 +375,35 @@ public class BotConfig
         {
             return new IntroConfig[0];
         }
+    }
+
+    public boolean addIntro(Long userId, IntroConfig[] introConfig)
+    {
+        // TODO what if user has no intro yet
+        try {
+            BufferedReader file = new BufferedReader(new FileReader("config.txt"));
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
+            while ((line = file.readLine()) != null)
+            {
+                stringBuffer.append(line);
+                stringBuffer.append(System.lineSeparator());
+            }
+            file.close();
+            String configString = stringBuffer.toString();
+
+            String configAbIntro = configString.substring(configString.lastIndexOf(userId.toString()));
+            String introConfigString = configAbIntro.substring(0, configAbIntro.indexOf(";")+1);
+            String newConfigString = userId.toString() + " =" + System.lineSeparator() + IntroConfig.arrayToString(introConfig);
+            
+            FileOutputStream fileOut = new FileOutputStream("config.txt");
+            fileOut.write(configString.replace(introConfigString, newConfigString).getBytes());
+            fileOut.close();
+        } catch (IOException e) {
+            System.out.println(e);
+            return false; // fail
+        }
+        load();
+        return true; // success
     }
 }

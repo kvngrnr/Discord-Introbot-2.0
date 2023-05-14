@@ -42,8 +42,6 @@ import com.jagrosh.jmusicbot.commands.dj.SkiptoCmd;
 import com.jagrosh.jmusicbot.commands.dj.StopCmd;
 import com.jagrosh.jmusicbot.commands.dj.VolumeCmd;
 import com.jagrosh.jmusicbot.commands.general.SettingsCmd;
-import com.jagrosh.jmusicbot.commands.music.ChooseIntroCmd;
-import com.jagrosh.jmusicbot.commands.music.IntroCmd;
 import com.jagrosh.jmusicbot.commands.music.LyricsCmd;
 import com.jagrosh.jmusicbot.commands.music.NowplayingCmd;
 import com.jagrosh.jmusicbot.commands.music.PlayCmd;
@@ -54,6 +52,9 @@ import com.jagrosh.jmusicbot.commands.music.SCSearchCmd;
 import com.jagrosh.jmusicbot.commands.music.SearchCmd;
 import com.jagrosh.jmusicbot.commands.music.ShuffleCmd;
 import com.jagrosh.jmusicbot.commands.music.SkipCmd;
+import com.jagrosh.jmusicbot.commands.music.intro.AddIntroCmd;
+import com.jagrosh.jmusicbot.commands.music.intro.ChooseIntroCmd;
+import com.jagrosh.jmusicbot.commands.music.intro.IntroCmd;
 import com.jagrosh.jmusicbot.commands.owner.AutoplaylistCmd;
 import com.jagrosh.jmusicbot.commands.owner.DebugCmd;
 import com.jagrosh.jmusicbot.commands.owner.EvalCmd;
@@ -151,6 +152,7 @@ public class JMusicBot
                         new PlayCmd(bot),
                         new IntroCmd(bot),
                         new ChooseIntroCmd(bot),
+                        new AddIntroCmd(bot),
                         new PlaylistsCmd(bot),
                         new QueueCmd(bot),
                         new RemoveCmd(bot),

@@ -1,4 +1,4 @@
-package com.jagrosh.jmusicbot.commands.music;
+package com.jagrosh.jmusicbot.commands.music.intro;
 
 import java.util.Random;
 
