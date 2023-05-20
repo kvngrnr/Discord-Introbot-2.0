@@ -36,7 +36,7 @@ public class DeleteIntroCmd extends MusicCommand {
         super(bot);
         this.name = "deleteintro";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.help = "let's you choose which of your intros to play";
+        this.help = "let's you choose which of your intros to delete";
         this.beListening = true;
         this.bePlaying = false;
         this.botPermissions = new Permission[] { Permission.MESSAGE_EMBED_LINKS };
