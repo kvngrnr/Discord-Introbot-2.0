@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.jagrosh.jmusicbot.entities.Prompt;
@@ -377,33 +378,66 @@ public class BotConfig
         }
     }
 
-    public boolean addIntro(Long userId, IntroConfig[] introConfig)
+    public boolean addIntro(Long userId, String userName, IntroConfig newIntro)
     {
-        // TODO what if user has no intro yet
         try {
-            BufferedReader file = new BufferedReader(new FileReader("config.txt"));
-            StringBuffer stringBuffer = new StringBuffer();
-            String line;
-            while ((line = file.readLine()) != null)
-            {
-                stringBuffer.append(line);
-                stringBuffer.append(System.lineSeparator());
-            }
-            file.close();
-            String configString = stringBuffer.toString();
+            // get current intros
+            IntroConfig[] currentIntros = this.getIntros(userId);
 
-            String configAbIntro = configString.substring(configString.lastIndexOf(userId.toString()));
-            String introConfigString = configAbIntro.substring(0, configAbIntro.indexOf(";")+1);
-            String newConfigString = userId.toString() + " =" + System.lineSeparator() + IntroConfig.arrayToString(introConfig);
-            
-            FileOutputStream fileOut = new FileOutputStream("config.txt");
-            fileOut.write(configString.replace(introConfigString, newConfigString).getBytes());
-            fileOut.close();
-        } catch (IOException e) {
-            System.out.println(e);
-            return false; // fail
+            // read current config file
+            String configString = this.readCurrentConfigFile();
+
+            if (currentIntros.length == 0) {
+                // user has no Intros yet, create empty config object with user id
+                String introConfig = configString.substring(configString.indexOf("intros"), configString.lastIndexOf(";")+1);
+                String newIntroConfig = introConfig + "\r\n\r\n// " + userName + "\r\n" + userId + " =\r\n[\r\n\r\n];";
+
+                // update config file
+                this.updateConfigFile(configString, introConfig, newIntroConfig);
+            }
+
+            // add new intro to list
+            ArrayList<IntroConfig> currentIntroList = new ArrayList<IntroConfig>(Arrays.asList(currentIntros));
+            currentIntroList.add(newIntro);
+            IntroConfig[] newIntros = currentIntroList.toArray(currentIntros);
+
+            // file needs to be reload in case if case has updated it
+            configString = this.readCurrentConfigFile();
+
+            // get substring of current introConfig and create string with new introConfig
+            String completeIntroConfigString = configString.substring(configString.indexOf("intros"), configString.lastIndexOf(";")+1);
+            String userIntroConfigString = completeIntroConfigString.substring(completeIntroConfigString.indexOf(userId.toString()));
+            String introConfigString = userIntroConfigString.substring(0, userIntroConfigString.indexOf(";")+1);
+            String newConfigString = userId.toString() + " =" + System.lineSeparator() + IntroConfig.arrayToString(newIntros);
+
+            // update config file
+            this.updateConfigFile(configString, introConfigString, newConfigString);
         }
-        load();
+        catch (IOException e) {
+            System.out.println("Could not update config file: " + e);
+            return false; // failed
+        }
+        
         return true; // success
+    }
+
+    private String readCurrentConfigFile() throws IOException {
+        BufferedReader file = new BufferedReader(new FileReader("config.txt"));
+        StringBuffer stringBuffer = new StringBuffer();
+        String line;
+        while ((line = file.readLine()) != null)
+        {
+            stringBuffer.append(line);
+            stringBuffer.append(System.lineSeparator());
+        }
+        file.close();
+        return stringBuffer.toString();
+    }
+
+    private void updateConfigFile(String configString, String oldString, String newString) throws IOException {
+        FileOutputStream fileOut = new FileOutputStream("config.txt");
+        fileOut.write(configString.replace(oldString, newString).getBytes());
+        fileOut.close();
+        load();
     }
 }
