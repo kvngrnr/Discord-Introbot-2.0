@@ -390,7 +390,8 @@ public class BotConfig
             if (currentIntros.length == 0) {
                 // user has no Intros yet, create empty config object with user id
                 String introConfig = configString.substring(configString.indexOf("intros"), configString.lastIndexOf(";")+1);
-                String newIntroConfig = introConfig + "\r\n\r\n// " + userName + "\r\n" + userId + " =\r\n[\r\n\r\n];";
+                String newIntroConfig = introConfig + System.lineSeparator() + System.lineSeparator() + "// " + userName
+                    + System.lineSeparator() + userId + " =" + System.lineSeparator() + "[" + System.lineSeparator() + System.lineSeparator() + "];";
 
                 // update config file
                 this.updateConfigFile(configString, introConfig, newIntroConfig);
@@ -406,12 +407,12 @@ public class BotConfig
 
             // get substring of current introConfig and create string with new introConfig
             String completeIntroConfigString = configString.substring(configString.indexOf("intros"), configString.lastIndexOf(";")+1);
-            String userIntroConfigString = completeIntroConfigString.substring(completeIntroConfigString.indexOf(userId.toString()));
-            String introConfigString = userIntroConfigString.substring(0, userIntroConfigString.indexOf(";")+1);
+            String introConfigStringFromUser = completeIntroConfigString.substring(completeIntroConfigString.indexOf(userId.toString()));
+            String userIntroConfigString = introConfigStringFromUser.substring(0, introConfigStringFromUser.indexOf(";")+1);
             String newConfigString = userId.toString() + " =" + System.lineSeparator() + IntroConfig.arrayToString(newIntros);
 
             // update config file
-            this.updateConfigFile(configString, introConfigString, newConfigString);
+            this.updateConfigFile(configString, userIntroConfigString, newConfigString);
         }
         catch (IOException e) {
             System.out.println("Could not update config file: " + e);
@@ -419,6 +420,27 @@ public class BotConfig
         }
         
         return true; // success
+    }
+
+    public boolean deleteIntro(Long userId, IntroConfig introToDelete) {
+        try {
+            // read current config file
+            String configString = this.readCurrentConfigFile();
+
+            // get substring of current introConfig
+            String completeIntroConfigString = configString.substring(configString.indexOf("intros"), configString.lastIndexOf(";")+1);
+            String introConfigStringFromUser = completeIntroConfigString.substring(completeIntroConfigString.indexOf(userId.toString()));
+            String userIntroConfigString = introConfigStringFromUser.substring(0, introConfigStringFromUser.indexOf(";")+1);
+            String updatedUserIntroConfigString = userIntroConfigString.replace(IntroConfig.toString(introToDelete) + System.lineSeparator(), "");
+
+            // update config file
+            this.updateConfigFile(configString, userIntroConfigString, updatedUserIntroConfigString);
+        }
+        catch (IOException e) {
+            System.out.println("Could not update config file: " + e);
+            return false; // failed
+        }
+        return true;
     }
 
     private String readCurrentConfigFile() throws IOException {
